@@ -10,11 +10,6 @@ locals {
   }
 }
 
-## File Path
-locals {
-  tmpl_dir = "../../tmpl"
-}
-
 ## Regions & Zones
 locals {
   project = "example-svc-prd"
