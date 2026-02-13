@@ -33,9 +33,9 @@
 | `slack_tfnotify_bot_name` | Terraform CD の実行通知用の Slack App BOT の名前 |  |
 | `terraform_version` | terraform の バージョン | 管理リポジトリ：<br>https://github.com/hashicorp/terraform |
 | `terraform_google_provider_version` | Terraform Google Provider のバージョン | 管理リポジトリ：<br>https://github.com/hashicorp/terraform-provider-google |
-| `prd_tfbackend_name` | `src` の本番向け Terraform Backend の名前 | 命名規則例：<br>`<service_kebab_name>-prd-terraform-backend` |
-| `stg_tfbackend_name` | `src` の検証向け Terraform Backend の名前 | 命名規則例：<br>`<service_kebab_name>-stg-terraform-backend` |
-| `dev_tfbackend_name` | `src` の開発向け Terraform Backend の名前 | 命名規則例：<br>`<service_kebab_name>-dev-terraform-backend` |
+| `prd_tfbackend_name` | `src` の本番向け Terraform Backend の名前 | 命名規則例：<br>`example-svc-prd-terraform-backend` |
+| `stg_tfbackend_name` | `src` の検証向け Terraform Backend の名前 | 命名規則例：<br>`example-svc-stg-terraform-backend` |
+| `dev_tfbackend_name` | `src` の開発向け Terraform Backend の名前 | 命名規則例：<br>`example-svc-dev-terraform-backend` |
 | `google_cloud_prd_project_id` | 本番向け Google Cloud Project の ID |  |
 | `google_cloud_stg_project_id` | 検証向け Google Cloud Project の ID |  |
 | `google_cloud_dev_project_id` | 開発向け Google Cloud Project の ID |  |

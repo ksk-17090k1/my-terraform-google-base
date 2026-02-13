@@ -2,11 +2,11 @@
 ## Label/Resource Naming
 locals {
   env_str          = "prd"
-  infra_repository = "<github_repository_name>"
+  infra_repository = "example-svc-terraform"
 
   lvgs_service_strs = {
-    kebab = "<service_kebab_name>"
-    snake = "<service_snake_name>"
+    kebab = "example-svc"
+    snake = "example_svc"
   }
 }
 
@@ -17,7 +17,7 @@ locals {
 
 ## Regions & Zones
 locals {
-  project = "<google_cloud_prd_project_id>"
+  project = "example-svc-prd"
 
   regions = {
     tokyo = "asia-northeast1"

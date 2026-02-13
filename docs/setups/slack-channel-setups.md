@@ -10,9 +10,9 @@ Slack の Channel・Webhook に関する設定を行う．設定済みの場合�
 
 | 概要 | 命名規則例 | 備考 |
 |---|---|---|
-| アプリ・インフラの本番向けデプロイの通知先 | `xl-deploy-prd-<service_kebab_name>` |  |
-| アプリ・インフラの検証向けデプロイの通知先 | `xl-deploy-stg-<service_kebab_name>` |  |
-| アプリ・インフラの開発向けデプロイの通知先 | `xl-deploy-dev-<service_kebab_name>` |  |
+| アプリ・インフラの本番向けデプロイの通知先 | `xl-deploy-prd-example-svc` |  |
+| アプリ・インフラの検証向けデプロイの通知先 | `xl-deploy-stg-example-svc` |  |
+| アプリ・インフラの開発向けデプロイの通知先 | `xl-deploy-dev-example-svc` |  |
 
 
 ## 2. Webhook URL の発行
@@ -44,7 +44,7 @@ App の管理コストを抑えるため，各 App は開発部等の一定粒�
 #### (2) 作成対象の App
 | 名前 | 用途 |
 |---|---|
-| `<slack_tfnotify_bot_name>` | Terraform CD の実行通知用の Slack App |
+| `example-svc-tfnotify` | Terraform CD の実行通知用の Slack App |
 
 ### 3.2. 注意
 #### 3.2.1. トークンの控え

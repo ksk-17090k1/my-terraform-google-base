@@ -1,4 +1,4 @@
-name: <github_repository_name>-ci
+name: example-svc-terraform-ci
 
 on:
   pull_request:
@@ -10,8 +10,8 @@ on:
       - "docs/**"
 
 env:
-  TF_VERSION: <terraform_version>
-  TFCMT_VERSION: <github_actions_tfcmt_version>
+  TF_VERSION: 1.12.2
+  TFCMT_VERSION: v4.14.7
 
 jobs:
   terraform_plan_prd:
@@ -31,22 +31,22 @@ jobs:
       - name: authenticate to google cloud
         uses: google-github-actions/auth@v2
         with:
-          service_account: ${{ secrets.<github_secret_prd_gcp_iam_service_account_key> }}
-          workload_identity_provider: ${{ secrets.<github_secret_prd_gcp_iam_workload_identity_key> }}
+          service_account: ${{ secrets.PRD_GCP_IAM_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.PRD_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: generate github apps access token
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.<github_secret_lvgs_github_app_id> }}
-          private-key: ${{ secrets.<github_secret_lvgs_github_app_private_key> }}
+          app-id: ${{ secrets.LVGS_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LVGS_GITHUB_APP_PRIVATE_KEY }}
           owner: "lv-technology-strategy"
 
       - name: github modules checkout
         uses: actions/checkout@v4
         with:
           repository: "lv-technology-strategy/github-actions-modules"
-          ref: <github_actions_tfaction_version>
+          ref: v1.0.2
           path: ${{ github.workspace }}/.github/modules
           token: ${{ steps.generate_token.outputs.token }}
 
@@ -58,7 +58,7 @@ jobs:
           terraform-version: ${{ env.TF_VERSION }}
           terraform-dir-rel-path: src/prd
           tfcmt-version: ${{ env.TFCMT_VERSION }}
-          tfcmt-target-var: <service_kebab_name>-prd
+          tfcmt-target-var: example-svc-prd
           tfcmt-config-rel-path: .tfcmt/github.yml
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-pr-head-sha: ${{ github.event.pull_request.head.sha }}
@@ -81,22 +81,22 @@ jobs:
       - name: authenticate to google cloud
         uses: google-github-actions/auth@v2
         with:
-          service_account: ${{ secrets.<github_secret_stg_gcp_iam_service_account_key> }}
-          workload_identity_provider: ${{ secrets.<github_secret_stg_gcp_iam_workload_identity_key> }}
+          service_account: ${{ secrets.STG_GCP_IAM_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.STG_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: generate github apps access token
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.<github_secret_lvgs_github_app_id> }}
-          private-key: ${{ secrets.<github_secret_lvgs_github_app_private_key> }}
+          app-id: ${{ secrets.LVGS_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LVGS_GITHUB_APP_PRIVATE_KEY }}
           owner: "lv-technology-strategy"
 
       - name: github modules checkout
         uses: actions/checkout@v4
         with:
           repository: "lv-technology-strategy/github-actions-modules"
-          ref: <github_actions_tfaction_version>
+          ref: v1.0.2
           path: ${{ github.workspace }}/.github/modules
           token: ${{ steps.generate_token.outputs.token }}
 
@@ -108,7 +108,7 @@ jobs:
           terraform-version: ${{ env.TF_VERSION }}
           terraform-dir-rel-path: src/stg
           tfcmt-version: ${{ env.TFCMT_VERSION }}
-          tfcmt-target-var: <service_kebab_name>-stg
+          tfcmt-target-var: example-svc-stg
           tfcmt-config-rel-path: .tfcmt/github.yml
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-pr-head-sha: ${{ github.event.pull_request.head.sha }}
@@ -131,22 +131,22 @@ jobs:
       - name: authenticate to google cloud
         uses: google-github-actions/auth@v2
         with:
-          service_account: ${{ secrets.<github_secret_dev_gcp_iam_service_account_key> }}
-          workload_identity_provider: ${{ secrets.<github_secret_dev_gcp_iam_workload_identity_key> }}
+          service_account: ${{ secrets.DEV_GCP_IAM_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.DEV_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: generate github apps access token
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.<github_secret_lvgs_github_app_id> }}
-          private-key: ${{ secrets.<github_secret_lvgs_github_app_private_key> }}
+          app-id: ${{ secrets.LVGS_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LVGS_GITHUB_APP_PRIVATE_KEY }}
           owner: "lv-technology-strategy"
 
       - name: github modules checkout
         uses: actions/checkout@v4
         with:
           repository: "lv-technology-strategy/github-actions-modules"
-          ref: <github_actions_tfaction_version>
+          ref: v1.0.2
           path: ${{ github.workspace }}/.github/modules
           token: ${{ steps.generate_token.outputs.token }}
 
@@ -158,7 +158,7 @@ jobs:
           terraform-version: ${{ env.TF_VERSION }}
           terraform-dir-rel-path: src/dev
           tfcmt-version: ${{ env.TFCMT_VERSION }}
-          tfcmt-target-var: <service_kebab_name>-dev
+          tfcmt-target-var: example-svc-dev
           tfcmt-config-rel-path: .tfcmt/github.yml
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-pr-head-sha: ${{ github.event.pull_request.head.sha }}

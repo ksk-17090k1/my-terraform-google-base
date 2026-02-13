@@ -1,4 +1,4 @@
-name: <github_repository_name>-cd-stg
+name: example-svc-terraform-cd-stg
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
       - "docs/**"
 
 env:
-  TF_VERSION: <terraform_version>
-  TFNOTIFY_VERSION: <github_actions_tfnotify_version>
+  TF_VERSION: 1.12.2
+  TFNOTIFY_VERSION: v1.5.1
 
 jobs:
   terraform_apply_stg:
@@ -28,22 +28,22 @@ jobs:
       - name: authenticate to google cloud
         uses: google-github-actions/auth@v2
         with:
-          service_account: ${{ secrets.<github_secret_stg_gcp_iam_service_account_key> }}
-          workload_identity_provider: ${{ secrets.<github_secret_stg_gcp_iam_workload_identity_key> }}
+          service_account: ${{ secrets.STG_GCP_IAM_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.STG_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: generate github apps access token
         id: generate_token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: ${{ secrets.<github_secret_lvgs_github_app_id> }}
-          private-key: ${{ secrets.<github_secret_lvgs_github_app_private_key> }}
+          app-id: ${{ secrets.LVGS_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LVGS_GITHUB_APP_PRIVATE_KEY }}
           owner: "lv-technology-strategy"
 
       - name: github modules checkout
         uses: actions/checkout@v4
         with:
           repository: "lv-technology-strategy/github-actions-modules"
-          ref: <github_actions_tfaction_version>
+          ref: v1.0.2
           path: ${{ github.workspace }}/.github/modules
           token: ${{ steps.generate_token.outputs.token }}
 
@@ -55,8 +55,8 @@ jobs:
           terraform-version: ${{ env.TF_VERSION }}
           terraform-dir-rel-path: src/stg
           tfnotify-version: ${{ env.TFNOTIFY_VERSION }}
-          tfnotify-target-var: <service_kebab_name>-stg
+          tfnotify-target-var: example-svc-stg
           tfnotify-config-rel-path: .tfnotify/slack.yml
-          slack-token: ${{ secrets.<github_secret_slack_app_oauth_token_key> }}
-          slack-channel-id: ${{ secrets.<github_secret_stg_slack_channel_id_key> }}
-          slack-bot-name: <slack_tfnotify_bot_name>
+          slack-token: ${{ secrets.TF_SLACK_APP_OAUTH_TOKEN }}
+          slack-channel-id: ${{ secrets.STG_TF_SLACK_CHANNEL_ID }}
+          slack-bot-name: example-svc-tfnotify

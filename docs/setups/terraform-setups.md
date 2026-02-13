@@ -97,18 +97,18 @@ $ bash ./bin/tfbackend-prepare.sh ${env} ${rsrc_name} ${region}
 
 | 項目 | 値 |
 |---|---|
-| `<github_secret_lvgs_github_app_id>` | テク戦管理下の `GitHub Enterprise App の ID`<br>利用の際，テク戦 SRE チームに情報を問い合わせること |
-| `<github_secret_lvgs_github_app_private_key>` | テク戦管理下の `GitHub Enterprise App の秘密鍵の中身`<br>利用の際，テク戦 SRE チームに情報を問い合わせること<br><br>※ 全てをコピーして Secret へ埋め込む |
-| `<github_secret_slack_app_oauth_token_key>` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で控えた，Terraform CD の実行通知用の Slack App の `Bot User OAuth Token` |
-| `<github_secret_prd_gcp_iam_service_account_key>` | 本番環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
-| `<github_secret_prd_gcp_iam_workload_identity_key>` | 本番環境用の Terraform CI/CD 向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
-| `<github_secret_prd_slack_channel_id_key>` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，本番向けデプロイ通知先の `Slack Channel ID` |
-| `<github_secret_stg_gcp_iam_service_account_key>` | 検証環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
-| `<github_secret_stg_gcp_iam_workload_identity_key>` | 検証環境用の Terraform CI/CD 向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
-| `<github_secret_stg_slack_channel_id_key>` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，検証向けデプロイ通知先の `Slack Channel ID` |
-| `<github_secret_dev_gcp_iam_service_account_key>` | 開発環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
-| `<github_secret_dev_gcp_iam_workload_identity_key>` | 開発環境用のTerraform CI/CD向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
-| `<github_secret_dev_slack_channel_id_key>` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，開発向けデプロイ通知先の `Slack Channel ID` |
+| `LVGS_GITHUB_APP_ID` | テク戦管理下の `GitHub Enterprise App の ID`<br>利用の際，テク戦 SRE チームに情報を問い合わせること |
+| `LVGS_GITHUB_APP_PRIVATE_KEY` | テク戦管理下の `GitHub Enterprise App の秘密鍵の中身`<br>利用の際，テク戦 SRE チームに情報を問い合わせること<br><br>※ 全てをコピーして Secret へ埋め込む |
+| `TF_SLACK_APP_OAUTH_TOKEN` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で控えた，Terraform CD の実行通知用の Slack App の `Bot User OAuth Token` |
+| `PRD_GCP_IAM_SERVICE_ACCOUNT` | 本番環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
+| `PRD_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER` | 本番環境用の Terraform CI/CD 向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
+| `PRD_TF_SLACK_CHANNEL_ID` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，本番向けデプロイ通知先の `Slack Channel ID` |
+| `STG_GCP_IAM_SERVICE_ACCOUNT` | 検証環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
+| `STG_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER` | 検証環境用の Terraform CI/CD 向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
+| `STG_TF_SLACK_CHANNEL_ID` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，検証向けデプロイ通知先の `Slack Channel ID` |
+| `DEV_GCP_IAM_SERVICE_ACCOUNT` | 開発環境用の Terraform CI/CD 向け `IAM Service Account のメールアドレス` |
+| `DEV_GCP_IAM_WORKLOAD_IDENTITY_PROVIDER` | 開発環境用のTerraform CI/CD向け `IAM Workload Identity Provider` (設定形式は [技術記事](https://zenn.dev/cloud_ace/articles/fcb1f0abf8d67c#3.-github-actions-%E3%81%AE%E8%A8%AD%E5%AE%9A)を参考) |
+| `DEV_TF_SLACK_CHANNEL_ID` | [Slack Channel 関連の初期設定](./slack-channel-setups.md) で作成した，開発向けデプロイ通知先の `Slack Channel ID` |
 
 ### 3.2. ファイル名のリネーム
 次を実行して，`.github/workflows` 内のファイルをリネームする．

@@ -1,12 +1,12 @@
 # Backend
 terraform {
-  required_version = "<terraform_version>"
+  required_version = "1.12.2"
 
   required_providers {
-    google = "<terraform_google_provider_version>"
+    google = "6.41.0"
   }
 
   backend "gcs" {
-    bucket = "<dev_tfbackend_name>"
+    bucket = "example-svc-dev-terraform-backend"
   }
 }
