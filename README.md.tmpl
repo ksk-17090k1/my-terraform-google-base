@@ -1,0 +1,219 @@
+# <github_repository_name>
+## 1. ディレクトリ構成
+```
+<github_repository_name>
+├── .github
+├── .tfcmt
+├── .tfnotify
+├── README.md
+├── docs
+│   ├── ops
+│   ├── setups
+│   └── diagram
+├── bin
+├── tmpl
+├── func
+└── src            # Terraformのソースコード
+```
+
+
+## 2. インフラ構成図
+### 2.1. 運用
+更新時は，`docs/diagram/google-architecture/google-architecture.drawio`ファイルを編集する．
+
+`drawio`ファイルの編集後，`docs/diagram/google-architecture`に`jpeg`ファイルを出力する．
+
+### 2.2. 概要
+工事中
+
+<!-- 構成図を環境共通で追加する場合 -->
+<!--
+![google-architecture](./docs/diagram/google-architecture/google-architecture.jpg)
+-->
+
+<!-- 構成図を環境毎に追加する場合 -->
+<!--
+#### (1) 本番環境
+![google-architecture-prd](./docs/diagram/google-architecture/google-architecture-prd.jpg)
+
+#### (2) 検証環境
+![google-architecture-stg](./docs/diagram/google-architecture/google-architecture-stg.jpg)
+
+#### (3) 開発環境
+![google-architecture-dev](./docs/diagram/google-architecture/google-architecture-dev.jpg)
+-->
+
+
+## 3. 初期設定
+テンプレートリポジトリの利用準備の後で，下表でNo.1から順に初期設定を行う．
+
+| No | 内容 | リンク |
+|---|---|---|
+| 1 | `ローカルで利用するツールの設定` | [docs/setups/local-tool-setups.md](./docs/setups/local-tool-setups.md) |
+| 2 | `Terraformに関する初期設定` | [docs/setups/terraform-setups.md](./docs/setups/terraform-setups.md) |
+
+
+## 4. ローカル環境
+### 4.1. 前提
+基本的に，本番環境・検証環境は，[CI/CD](#5-cicd)でインフラ設定を適用する．
+
+開発環境を利用する場合は，ローカルでのインフラ適用は開発体制をもとに検討する．
+
+### 4.2. 認証設定
+次のコマンドを実行して，Google Cloudのログインとアクセスクレデンシャルの作成を行う．
+
+実行時に，ターミナルで URL が表示される．これをブラウザで開いて操作を行い，認証コードをコピーする．
+
+コピーした認証コードをターミナルに貼り付けて，実行を続ける．
+
+#### (1) アクセスクレデンシャルの作成
+
+```sh
+$ gcloud auth application-default login --no-launch-browser
+```
+
+#### (2) 認証設定の破棄 (例：退職/異動の際)
+
+```sh
+$ gcloud auth application-default revoke
+```
+
+### 4.3. 差分の確認・反映
+次のコマンドを実行して，インフラ状態差分の確認・適用を行う．
+
+#### (1) インフラ状態差分の確認
+```sh
+$ cd src/dev/
+$ terraform init && terraform plan
+```
+
+#### (2) インフラ状態差分の適用
+```sh
+$ cd src/dev/
+$ terraform init && terraform apply -auto-approve
+```
+
+
+## 5. CI/CD
+### 5.1. トリガー
+CI/CDのトリガー設定は，次の通りである．
+
+| No | 種別 | 設定 |
+|---|---|---|
+| 1 | `各環境向けのCI` | 作業ブランチから`main`へのプルリクエストの作成・更新 |
+| 2 | `手動実行用の本番環境向けのCI` | `GitHub Actions`の画面から手動で実行する |
+| 3 | `定期的なインフラ差分の確認` | `GitHub Actions`のスケジュールに沿って実行する |
+| 4 | `各環境向けのCD` | 作業ブランチから`main`へのプルリクエストのマージ対応 |
+
+### 5.2. ワークフロー
+CI/CDのワークフロー概要は，次の通りである．
+
+#### (1) CIのジョブ：トリガー実行
+CIのジョブ構成は次の通りである．以下のジョブを環境毎に並列で実行する．
+
+![github-actions-ci](./docs/diagram/github-actions/github-actions-ci.jpg)
+
+| No | 処理 | 内容 |
+|---|---|---|
+| 1 | `main checkout` | この`Git`リポジトリのチェックアウト処理 |
+| 2 | `merge into default branch` | `Git`のデフォルトブランチへのマージ |
+| 3 | `authenticate to google cloud` | クラウドインフラへの認証 |
+| 4 | `github modules checkout` | 以下の`Git`リポジトリのチェックアウト処理<br><br>1. [社内向けのTerraform Modules](https://github.com/lv-technology-strategy/terraform-modules-google)<br>2. [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+| 5 | `terraform ci` | 社内向けの`Terraform CI Action`<br><br>※ [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+
+#### (2) CIのジョブ：手動実行
+CIの手動実行のジョブ構成は次の通りである．本番環境のインフラ適用の直前に利用する．
+
+![github-actions-ci-manual](./docs/diagram/github-actions/github-actions-ci-manual.jpg)
+
+| No | 処理 | 内容 |
+|---|---|---|
+| 1 | `main checkout` | この`Git`リポジトリのチェックアウト処理 |
+| 2 | `authenticate to google cloud` | クラウドインフラへの認証 |
+| 3 | `github modules checkout` | 以下の`Git`リポジトリのチェックアウト処理<br><br>1. [社内向けのTerraform Modules](https://github.com/lv-technology-strategy/terraform-modules-google)<br>2. [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+| 4 | `terraform ci` | 社内向けの`Terraform CI Action`<br><br>※ [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+
+#### (3) インフラ差分確認のジョブ
+インフラ差分確認のジョブ構成は次の通りである．以下のジョブを，スケジュールに沿って環境毎に並列で実行する．
+
+![github-actions-diff-check](./docs/diagram/github-actions/github-actions-diff-check.jpg)
+
+| No | 処理 | 内容 |
+|---|---|---|
+| 1 | `main checkout` | この`Git`リポジトリのチェックアウト処理 |
+| 2 | `authenticate to google cloud` | クラウドインフラへの認証 |
+| 3 | `github modules checkout` | 以下の`Git`リポジトリのチェックアウト処理<br><br>1. [社内向けのTerraform Modules](https://github.com/lv-technology-strategy/terraform-modules-google)<br>2. [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) | |
+| 4 | `terraform diff check` | 社内向けの`Terraform Diff Check Action`<br><br>※ [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+
+#### (4) CDのジョブ
+CDのジョブ構成は次の通りである．以下のジョブを環境別で実行する．
+
+![github-actions-cd](./docs/diagram/github-actions/github-actions-cd.jpg)
+
+| No | 処理 | 内容 |
+|---|---|---|
+| 1 | `main checkout` | この`Git`リポジトリのチェックアウト処理 |
+| 2 | `authenticate to google cloud` | クラウドインフラへの認証 |
+| 3 | `github modules checkout` | 以下の`Git`リポジトリのチェックアウト処理<br><br>1. [社内向けのTerraform Modules](https://github.com/lv-technology-strategy/terraform-modules-google)<br>2. [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+| 4 | `terraform cd` | 社内向けの`Terraform CD Action`<br><br>※ [社内向けのGitHub Composite Actions](https://github.com/lv-technology-strategy/github-actions-modules) |
+
+### 5.3. CIの手動実行
+`GitHub`の[CIの手動実行のワークフロー](https://github.com/<github_organization_name>/<github_repository_name>/actions/workflows/ci-manual-prd.yml)の画面で，画面左側の`Run workflow`を開く．
+
+下記を対応し，問題が無ければ`Run workflow`を押して本番環境向けのCIを実行する．
+
+- `Use workflow from`：`main`ブランチが選択されていることを確認する
+
+
+## 6. Git運用
+実装者・レビュワー・リリース担当者で分けて，以下のフローで`Git`の運用を行う．
+
+### 6.1. 本番以外の統合
+#### 6.1.1. 実装者向け
+1. ローカルで，`main`から作業ブランチを作り，作業ブランチで開発を行う
+2. 開発の後は，`GitHub`で作業ブランチから`main`へのプルリクエストを作成する
+3. プルリクエストに概要を記載し，CIの実行結果に問題が無いかどうかを確認する
+4. 問題が無ければ，レビュワーに対してプルリクエストのレビューを依頼する
+
+#### 6.1.2. レビュワー向け
+1. `GitHub`で，作業ブランチから`main`へのプルリクエストをレビューする
+2. コード差分やCIの結果に問題が無ければ，マージ対応を行ってCDを実行する
+
+### 6.2. 本番向けの統合
+#### リリース担当者向け
+1. 本番環境への変更の反映に関するスケジュール調整を行う (不要ならばスキップする)
+2. [CIの手動実行](#53-ciの手動実行)に沿って，手動用の本番向けCIを実行して差分を確認する
+3. 問題が無ければ，`main`で[リリース作成](#7-リリース作成)を行って，本番向けCDを実行する
+
+
+## 7. リリース作成
+`GitHub`リポジトリのページで`Releases`を押し，遷移先の画面で作成画面を開く．
+
+作成画面では，下表を参考に選択・記入を行い，`Save draft`を押して下書き保存をする．
+
+選択・記載の内容に問題が無ければ，`Publish release`を押してリリースを作成する．
+
+| No | 項目 | 内容 |
+|---|---|---|
+| 1 | `Choose a tag` | `yyyymmdd_xx`の様な形式の文字列を記載する<br>(例：`20220927_00`，`20220927_01`，`20220927_10`) |
+| 2 | `Target` | `main`が選択されていることを確認する<br>(`main`がデフォルトブランチのため，特に何もしない) |
+| 3 | `Release title` | `Choose a tag`の値と同じ文字列を記載する |
+| 4 | `Describe this release` | リリースの変更点を簡単に記入する |
+
+
+## 8. 運用方法
+以下は，運用方法の一覧である．
+
+| No | 内容 | リンク |
+|---|---|---|
+| 1 | `Terraformのリソース管理操作` | [docs/ops/terraform-resource-ops.md](./docs/ops/terraform-resource-ops.md) |
+| 2 | `Terraform関連のアップグレード` | [docs/ops/terraform-upgrade-ops.md](./docs/ops/terraform-upgrade-ops.md) |
+
+
+## 9. 参考情報
+以下は，参考情報の一覧である．
+
+| No | 概要 | リンク |
+|---|---|---|
+| 1 | `Terraformの公式資料` | <https://www.terraform.io/docs> |
+| 2 | `Terraform Google Providerの公式資料` | <https://registry.terraform.io/providers/hashicorp/google/latest/docs> |
