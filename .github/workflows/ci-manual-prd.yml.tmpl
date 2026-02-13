@@ -1,0 +1,49 @@
+name: <github_repository_name>-ci-manual-prd
+
+on:
+  workflow_dispatch:
+
+env:
+  TF_VERSION: <terraform_version>
+
+jobs:
+  terraform_plan_prd:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: main checkout
+        uses: actions/checkout@v4
+
+      - name: authenticate to google cloud
+        uses: google-github-actions/auth@v2
+        with:
+          service_account: ${{ secrets.<github_secret_prd_gcp_iam_service_account_key> }}
+          workload_identity_provider: ${{ secrets.<github_secret_prd_gcp_iam_workload_identity_key> }}
+
+      - name: generate github apps access token
+        id: generate_token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.<github_secret_lvgs_github_app_id> }}
+          private-key: ${{ secrets.<github_secret_lvgs_github_app_private_key> }}
+          owner: "lv-technology-strategy"
+
+      - name: github modules checkout
+        uses: actions/checkout@v4
+        with:
+          repository: "lv-technology-strategy/github-actions-modules"
+          ref: <github_actions_tfaction_version>
+          path: ${{ github.workspace }}/.github/modules
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: terraform ci
+        uses: ./.github/modules/actions/terraform-ci
+        with:
+          github-apps-access-token: ${{ steps.generate_token.outputs.token }}
+          comment-tfplan-results: disabled
+          terraform-version: ${{ env.TF_VERSION }}
+          terraform-dir-rel-path: src/prd
